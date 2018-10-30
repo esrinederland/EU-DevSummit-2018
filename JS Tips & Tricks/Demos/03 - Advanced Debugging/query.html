@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Request data from a remote server - 4.5</title>
+
+    <style>
+        html,
+        body,
+        #viewDiv {
+            font-family: sans-serif;
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        .container {
+            padding: 1em;
+        }
+
+        input {
+            width: 75%;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.5/esri/css/main.css">
+    <script src="https://js.arcgis.com/4.5/"></script>
+
+    <script>"http://localhost/03/somefile.js"</script>
+
+    <script>
+        require([
+            "esri/request",
+            "dojo/on",
+            "dojo/domReady!"
+        ], function (
+            esriRequest,
+            on
+        ) {
+                var resultsDiv = document.getElementById("resultsDiv");
+                var input = document.getElementById("inputUrl");
+
+                /************************************************
+                 *
+                 * Define the 'options' for our request.
+                 *
+                 *************************************************/
+                var options = {
+                    query: {
+                        where: "1=1",
+                        f: "json"
+                    },
+                    responseType: 'json',
+                    method: 'post'
+                };
+
+                // Make the request on a button click using the
+                // value of the 'input' text.
+                on(btnQuery, "click", function () {
+                    var url = input.value;
+                    esriRequest(url, options).then(function (response) {
+                        console.log('response', response);
+                        var responseJSON = JSON.stringify(response, null, 2);
+                        resultsDiv.innerHTML = responseJSON;
+                    }, function (error) {
+                        console.log("some error: ", error);
+                    });
+                });
+            });
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div>
+            <h2>Using esri/request</h2>
+            <button id="btnQuery">Query Features</button>
+            <input id="inputUrl" type="text" value="https://services.arcgis.com/emS4w7iyWEQiulAb/arcgis/rest/services/European_Cities_ReadOnly/FeatureServer/0/query">
+
+        </div>
+        <pre id="resultsDiv"></pre>
+    </div>
+</body>
+
+</html>

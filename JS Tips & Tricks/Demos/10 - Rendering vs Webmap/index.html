@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Rendering vs Webmap</title>
+
+  <style>
+    html,
+    body {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      background-color: #000;
+    }
+
+    .viewDivBase {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 49.9%;
+    }
+
+    #viewDivJS {
+      float: left;
+    }
+
+    #viewDivWebMap {
+      float: right;
+    }
+
+    .info {
+      color: #444;
+      font-family: "Avenir Next W00", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      padding: 5px;
+      margin: 5px;
+      width: 120px;
+      text-align: center;
+      border: solid 2px #666;
+      border-radius: 4px;
+      background-color: #fff;
+    }
+
+    .chkLabel {
+      font-size: 12px;
+    }
+  </style>
+
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    var viewWebMap;
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/TileLayer",
+      "esri/core/Collection",
+      "esri/Basemap",
+      "esri/geometry/Extent",
+      "esri/layers/FeatureLayer",
+
+      "esri/WebMap",
+
+      "dojo/domReady!"
+    ], function (
+      Map,
+      MapView,
+      TileLayer,
+      Collection,
+      Basemap,
+      Extent,
+      FeatureLayer,
+
+      WebMap
+    ) {
+
+
+        /************************************************************
+        * Create basmap, featurelayer, renderer and map and add it to the view
+        ************************************************************/
+        var layer = new TileLayer({
+          url: "http://services.arcgisonline.nl/arcgis/rest/services/Basiskaarten/Donkergrijze_Canvas/MapServer",
+          opacity: 0.5
+        });
+
+        var baselayers = new Collection([layer]);
+        var basemap = new Basemap({ baseLayers: baselayers });
+
+        var cbRenderer = {
+          type: "class-breaks",
+
+          field: "Bouwjaar",
+          classBreakInfos: [
+            {
+              minValue: 0,
+              maxValue: 1658,
+              symbol:
+              {
+                type: "simple-fill",
+                style: "solid",
+                color: [255, 255, 217, 255],
+                outline: {
+                  color: [0, 0, 0, 0],
+                  width: 0
+                }
+              },
+              label: "≤1685"
+            },
+            {
+              minValue: 1659,
+              maxValue: 1850,
+              symbol:
+              {
+                type: "simple-fill",
+                style: "solid",
+                color: [244, 250, 193, 255],
+                outline: {
+                  color: [0, 0, 0, 0],
+                  width: 0
+                }
+              },
+              label: "≤1850"
+            },
+            {
+              minValue: 1851,
+              maxValue: 1900,
+              symbol:
+              {
+                type: "simple-fill",
+                style: "solid",
+                color: [229, 245, 177, 255],
+                outline: {
+                  color: [0, 0, 0, 0],
+                  width: 0
+                }
+              },
+              label: "≤1900"
+            },
+            {
+              minValue: 1901,
+              maxValue: 1930,
+              symbol:
+              {
+                type: "simple-fill",
+                style: "solid",
+                color: [206, 236, 179, 255],
+                outline: {
+                  color: [0, 0, 0, 0],
+                  width: 0
+                }
+              },
+              label: "≤1930"
+            },
+            {
+              minValue: 1931,
+              maxValue: 1945,
+              symbol:
+              {
+                type: "simple-fill",
+                style: "solid",
+                color: [170, 221, 182, 255],
+                outline: {
+                  color: [0, 0, 0, 0],
+                  width: 0
+                }
+              },
+              label: "≤1945"
+            },
+            {
+              minValue: 1946,
+              maxValue: 1960,
+              symbol:
+              {
+                type: "simple-fill",
+                style: "solid",
+                color: [127, 205, 187, 255],
+                outline: {
+                  color: [0, 0, 0, 0],
+                  width: 0
+                }
+              },
+              label: "≤1960"
+            },
+            {
+              minValue: 1961,
+              maxValue: 1975,
+              symbol:
+              {
+                type: "simple-fill",
+                style: "solid",
+                color: [89, 191, 192, 255],
+                outline: {
+                  color: [0, 0, 0, 0],
+                  width: 0
+                }
+              },
+              label: "≤1975"
+            },
+            {
+              minValue: 1976,
+              maxValue: 1985,
+              symbol:
+              {
+                type: "simple-fill",
+                style: "solid",
+                color: [57, 174, 195, 255],
+                outline: {
+                  color: [0, 0, 0, 0],
+                  width: 0
+                }
+              },
+              label: "≤1985"
+            },
+            {
+              minValue: 1986,
+              maxValue: 1995,
+              symbol:
+              {
+                type: "simple-fill",
+                style: "solid",
+                color: [36, 152, 192, 255],
+                outline: {
+                  color: [0, 0, 0, 0],
+                  width: 0
+                }
+              },
+              label: "≤1995"
+            },
+            {
+              minValue: 1996,
+              maxValue: 2005,
+              symbol:
+              {
+                type: "simple-fill",
+                style: "solid",
+                color: [31, 124, 182, 255],
+                outline: {
+                  color: [0, 0, 0, 0],
+                  width: 0
+                }
+              },
+              label: "≤2005"
+            },
+            {
+              minValue: 2006,
+              maxValue: 9999,
+              symbol:
+              {
+                type: "simple-fill",
+                style: "solid",
+                color: [34, 94, 168, 255],
+                outline: {
+                  color: [0, 0, 0, 0],
+                  width: 0
+                }
+              },
+              label: ">2005"
+            }
+          ]
+        };
+
+
+
+
+
+        var featureLayer = new FeatureLayer({
+          // URL to the service
+          url: "https://services.arcgis.com/emS4w7iyWEQiulAb/arcgis/rest/services/BAGPandZwolleCentrum/FeatureServer/0"
+          , renderer: cbRenderer
+        });
+
+        var map = new Map({
+          basemap: basemap
+        });
+        map.add(featureLayer);
+
+        var viewOptions = {
+          map: map,
+          extent: new Extent({
+            xmin: 201962,
+            ymin: 501949,
+            xmax: 203991,
+            ymax: 504057,
+            spatialReference: {
+              wkid: 28992
+            }
+          })
+        };
+
+        var viewJS = new MapView(viewOptions);
+        viewJS.container = "viewDivJS";
+        viewJS.ui.add("info1", "top-right");
+
+
+        /************************************************************
+        * Create a webmap and display int in the view
+        ************************************************************/
+        viewWebMap = new MapView({
+          map: new WebMap({
+            portalItem: {
+              id: "4235e5fcf30940feb8c362f35779ceac"
+            }
+          }),
+          container: "viewDiv"
+        });
+        viewWebMap.container = "viewDivWebMap";
+        viewWebMap.ui.add("info2", "top-right");
+
+      });
+  </script>
+</head>
+
+<body>
+  <div class="viewDivBase" id="viewDivJS">
+    <div id="info1" class="info">
+      <div>
+        <label class="chkLabel">This map was configured completely in JavaScript.
+        </label></div>
+
+    </div>
+  </div>
+  <div class="viewDivBase" id="viewDivWebMap">
+    <div id="info2" class="info">
+      <div>
+        <label class="chkLabel">This map was configured through a WebMap.
+        </label></div>
+
+    </div>
+  </div>
+</body>
+
+</html>

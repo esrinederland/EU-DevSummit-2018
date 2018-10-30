@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Request data from a remote server - 4.9</title>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      font-family: sans-serif;
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    .container {
+      padding: 1em;
+    }
+
+    input {
+      width: 75%;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "dojo/_base/array",
+      "esri/request",
+      "esri/config",
+      "esri/core/urlUtils"
+    ], function(
+      array,
+      esriRequest,
+      esriConfig,
+      urlUtils
+    ) {
+
+      var resultsDiv = document.getElementById("resultsDiv");
+      var input = document.getElementById("inputUrl");
+
+      /************************************************
+       *
+       * Define the 'options' for our request.
+       *
+       *************************************************/
+      var options = {
+        query: {
+          f: 'json',
+          method: 'post',
+          q: 'owner:mjagtPortal AND tags:ShowMeTheGroupies'
+        },
+        responseType: 'json',
+      };
+
+      /************************************************
+       *
+       * Set the proxy.
+       *
+       *************************************************/
+
+      // urlUtils.addProxyRule({
+      //      urlPrefix: "https://www.arcgis.com",
+      //      proxyUrl: "http://localhost/11/proxy_ds18/proxy.ashx"
+      //  });
+
+
+
+      // Make the request on a button click
+      btnQuery.addEventListener("click", function () {
+        var url = input.value;
+        resultsDiv.innerHTML = "<div style='display:table;'><div style='display:table-row;'>";
+        esriRequest(url, options).then(function(response) {
+          console.log('response', response);
+          array.forEach(response.data.results, function(group){
+            resultsDiv.innerHTML += "<div style='display:table-column;float:left;width:200px;height:200px'>" + 
+                                    "<img src='http://localhost/08/proxy_ds18/proxy.ashx?https://mjagtportal.maps.arcgis.com/sharing/rest/community/groups/" + group.id + "/info/" + group.thumbnail + "'></img>" + 
+                                    "<h2>" + group.title + "</h2>" + group.description + "</div>"
+          });
+          resultsDiv.innerHTML += "</div></div>";
+        });
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <div class="container">
+    <div>
+      <h2>Show me the groupies!!</h2>
+      <button id="btnQuery">Go get'em!</button>
+      <input id="inputUrl" type="text" value="https://www.arcgis.com/sharing/rest/community/groups">
+    </div>
+    <pre id="resultsDiv"></pre>
+  </div>
+</body>
+
+</html>

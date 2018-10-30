@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Debug Session Berlin</title>
+  <style>
+    @font-face {
+      font-family: theIBMfont;
+      src: url(Px437_IBM_BIOS.ttf);
+    }
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      font-family: "Avenir Next W00","Avenir Next",Avenir,"Helvetica Neue",Helvetica,Arial,sans-serif;
+      color: #196fa6;
+    }
+    #btnZoomLevel, #btnQuery {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 125px;
+      height: 23px;
+      padding: 3px;
+      text-align: center;
+      font-size: 16px;
+      border: 1px;
+    }
+    #btnQuery {
+      top: 43px;
+    }
+    .btn-default {
+      color: #196fa6;
+      background-color: #fff;
+      border-color: #196fa6;
+    }
+    .btn-default :active, .btn-default:hover {
+      background-color: #196fa6!important;
+      color: #fff!important;
+      cursor: pointer;
+    }
+
+    .btn-warning {
+      color: #fff;
+      background-color: #DE970F;
+      border-color: #b03e17;
+    }
+    .btn-danger {
+      color: #fff;
+      background-color: #c7461a;
+      border-color: #b03e17;
+    }
+    .btn-warning:hover, .btn-danger:hover {
+      background-color: #FFAA00;
+      cursor: pointer;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/FeatureLayer",
+      "esri/tasks/support/Query",
+      "esri/tasks/QueryTask",
+      "esri/widgets/Locate",
+      "esri/widgets/Search",
+      "dojo/on", 
+      "dojo/dom",
+      "dojo/dom-style",
+      "dojo/dom-class",
+      "dojo/domReady!"
+    ], function(
+      Map,
+      MapView,
+      FeatureLayer,
+      Query,
+      QueryTask,
+      Locate,
+      Search,
+      on,
+      dom,
+      domStyle,
+      domClass
+      ) {
+      
+      let map;
+      let view;
+      let zoomLevel = 8;
+
+      ///*************************///
+      /// BUILDING THE INTERFACE  ///
+      ///*************************///
+
+      map = new Map({
+        basemap: "dark-gray"
+      });
+      
+      let lyr = new FeatureLayer({ url: "https://services.arcgis.com/OLiydejKCZTGhvWg/arcgis/rest/services/Berliner_Mauer/FeatureServer" });
+      map.add(lyr);
+
+      view = new MapView({
+        container: "viewDiv",
+        map: map,
+        zoom: zoomLevel,
+        center: [13.345, 52.515485] // longitude, latitude
+      });
+
+      ///*************************///
+      /// ZOOM FUNCTIONS          ///
+      ///*************************///
+
+      function btnZoomClick() {
+        zoomIn("1","2");
+        zoomIn("3","4");
+        //zoomIn("5","6");
+      }
+
+      function zoomIn(fakeParam1, fakeParam2) {
+        zoomLevel++;
+        view.zoom = zoomLevel;
+        updateDiv(zoomLevel);
+      }
+
+      function updateDiv(level) {
+        dom.byId("btnZoomLevel").innerHTML = "Zoom Level " + level;
+        if(level == 10) {
+            domClass.replace('btnZoomLevel', 'btn-warning', 'btn-default');
+        }          
+        if(level > 10) {
+            domClass.replace('btnZoomLevel', 'btn-danger', 'btn-warning');
+        }          
+      }
+      
+      on(dom.byId("btnZoomLevel"), "click", btnZoomClick);
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv">
+    <div class="btn-default" id="btnZoomLevel">Start 3x zoomIn</div>
+  </div>
+</body>
+</html>
