@@ -8,7 +8,7 @@
 
 ---
 
-The links<br>
+The links
 
 - [REST API on the Developers website](https://developers.arcgis.com/rest/)
 - [REST DevLabs](https://developers.arcgis.com/labs/?product=REST-API&topic=any)
